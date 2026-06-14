@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.0.94"],
   trailingSlash: true,
   basePath: "/boom-hill-land-monorepo",
+  assetPrefix: "/boom-hill-land-monorepo",
 };
 
 export default nextConfig;
