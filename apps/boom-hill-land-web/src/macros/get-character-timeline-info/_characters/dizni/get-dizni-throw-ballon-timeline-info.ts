@@ -17,7 +17,7 @@ export function getDizniThrowBallonTimelineInfo(
     timelines: [
       {
         uniqueKey: "throw-001",
-        imageUrl: `${BASE_PATH}/boom-hill-character/dao/throw-ballon/throw-ballon-001.png`, // 뒷 모습
+        imageUrl: `${BASE_PATH}/boom-hill-character/dizni/throw-ballon/throw-ballon-001.png`, // 뒷 모습
         durationMs: isRandomSpeed
           ? getRandomNumber({
               min: CHARACTER_ANIMATION_THROW_BALLON_RANDOM_SPEED_RANGE.MIN,
@@ -27,7 +27,7 @@ export function getDizniThrowBallonTimelineInfo(
       },
       {
         uniqueKey: "throw-002",
-        imageUrl: `${BASE_PATH}/boom-hill-character/dao/throw-ballon/throw-ballon-002.png`, // 뒷 모습인 상태에서 던지려는 포즈
+        imageUrl: `${BASE_PATH}/boom-hill-character/dizni/throw-ballon/throw-ballon-002.png`, // 뒷 모습인 상태에서 던지려는 포즈
         durationMs: isRandomSpeed
           ? getRandomNumber({
               min: CHARACTER_ANIMATION_THROW_BALLON_RANDOM_SPEED_RANGE.MIN,
@@ -37,7 +37,7 @@ export function getDizniThrowBallonTimelineInfo(
       },
       {
         uniqueKey: "throw-003",
-        imageUrl: `${BASE_PATH}/boom-hill-character/dao/throw-ballon/throw-ballon-003.png`, // 뒷 모습인 상태에서 던진 후 모습
+        imageUrl: `${BASE_PATH}/boom-hill-character/dizni/throw-ballon/throw-ballon-003.png`, // 뒷 모습인 상태에서 던진 후 모습
         durationMs: isRandomSpeed
           ? getRandomNumber({
               min: CHARACTER_ANIMATION_THROW_BALLON_RANDOM_SPEED_RANGE.MIN,
