@@ -17,7 +17,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
 
       - run: corepack enable
-      - run: corepack prepare pnpm@stable --activate
+      - run: corepack prepare pnpm --activate
       - run: pnpm install
       - run: pnpm run build --filter @boom-hill-land-monorepo/boom-hill-land-web
 
