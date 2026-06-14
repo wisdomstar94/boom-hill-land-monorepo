@@ -19,7 +19,8 @@ jobs:
       - run: corepack enable
       - run: corepack prepare pnpm --activate
       - run: pnpm install
-      - run: pnpm run build --filter @boom-hill-land-monorepo/boom-hill-land-web
+      - run: pnpm run build
+      - run: pnpm run next:build --filter @boom-hill-land-monorepo/boom-hill-land-web
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v5
