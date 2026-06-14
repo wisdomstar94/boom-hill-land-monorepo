@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { BASE_PATH } from "./src/consts/urls/base-path";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -8,8 +9,7 @@ const nextConfig: NextConfig = {
   },
   allowedDevOrigins: ["192.168.0.94"],
   trailingSlash: true,
-  basePath: "/boom-hill-land-monorepo",
-  assetPrefix: "/boom-hill-land-monorepo",
+  basePath: process.env.NEXT_PUBLIC_IS_LOCAL === "true" ? undefined : BASE_PATH,
 };
 
 export default nextConfig;

@@ -8,6 +8,7 @@ import {
   CHARACTER_TARGET_NAMES,
   type CharacterTarget,
 } from "../../../consts/characters/character-target.consts";
+import { BASE_PATH } from "../../../consts/urls/base-path";
 import { useCharacterSelectDialog } from "../../../hooks/use-character-select-dialog";
 import { getCharacterTimelineInfo } from "../../../macros/get-character-timeline-info";
 import { Dart } from "./_components/dart/dart";
@@ -46,22 +47,22 @@ export default function Page() {
                 timelines: [
                   {
                     uniqueKey: "001",
-                    imageUrl: "/things/ballon/ballon-001.png",
+                    imageUrl: `${BASE_PATH}/things/ballon/ballon-001.png`,
                     durationMs: 200,
                   },
                   {
                     uniqueKey: "002",
-                    imageUrl: "/things/ballon/ballon-002.png",
+                    imageUrl: `${BASE_PATH}/things/ballon/ballon-002.png`,
                     durationMs: 200,
                   },
                   {
                     uniqueKey: "003",
-                    imageUrl: "/things/ballon/ballon-003.png",
+                    imageUrl: `${BASE_PATH}/things/ballon/ballon-003.png`,
                     durationMs: 200,
                   },
                   {
                     uniqueKey: "004",
-                    imageUrl: "/things/ballon/ballon-002.png",
+                    imageUrl: `${BASE_PATH}/things/ballon/ballon-002.png`,
                     durationMs: 200,
                   },
                 ],
@@ -199,20 +200,17 @@ export default function Page() {
                                         timelines: [
                                           {
                                             uniqueKey: "001",
-                                            imageUrl:
-                                              "/things/ballon-explode/ballon-explode-001.png",
+                                            imageUrl: `${BASE_PATH}/things/ballon-explode/ballon-explode-001.png`,
                                             durationMs: 100,
                                           },
                                           {
                                             uniqueKey: "002",
-                                            imageUrl:
-                                              "/things/ballon-explode/ballon-explode-002.png",
+                                            imageUrl: `${BASE_PATH}/things/ballon-explode/ballon-explode-002.png`,
                                             durationMs: 100,
                                           },
                                           {
                                             uniqueKey: "003",
-                                            imageUrl:
-                                              "/things/ballon-explode/ballon-explode-003.png",
+                                            imageUrl: `${BASE_PATH}/things/ballon-explode/ballon-explode-003.png`,
                                             durationMs: 100,
                                           },
                                         ],

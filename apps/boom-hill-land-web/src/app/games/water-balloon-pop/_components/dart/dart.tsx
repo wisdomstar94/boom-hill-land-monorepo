@@ -1,6 +1,7 @@
 import { createTimeline } from "animejs";
 import NextImage from "next/image";
 import { useEffect, useRef } from "react";
+import { BASE_PATH } from "../../../../../consts/urls/base-path";
 import { getRandomNumber } from "../../../../../macros/get-random-number";
 
 export type DartProps = {
@@ -60,7 +61,7 @@ export function Dart(props: DartProps) {
     <div ref={dartRef} className={`w-[20px] aspect-20/60 ${throwAt === null ? "invisible" : ""}`}>
       <NextImage
         className="w-full h-full object-contain"
-        src="/things/dart.png"
+        src={`${BASE_PATH}/things/dart.png`}
         alt="dart"
         width={100}
         height={100}
