@@ -1,0 +1,4 @@
+{
+  "root": false,
+  "extends": ["@boom-hill-land-monorepo/biome-config/base"]
+}

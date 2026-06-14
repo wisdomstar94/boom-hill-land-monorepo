@@ -1,0 +1,39 @@
+{
+  "name": "@boom-hill-land-monorepo/react-ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check",
+    "format": "biome format --write",
+    "ncu:update": "ncu -u --dep \"prod\",\"dev\",\"optional\",\"packageManager\",\"peer\""
+  },
+  "dependencies": {
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "devDependencies": {
+    "vite": "8.0.16",
+    "typescript": "6.0.3",
+    "@boom-hill-land-monorepo/vite-config": "workspace:*",
+    "@boom-hill-land-monorepo/typescript-config": "workspace:*",
+    "@boom-hill-land-monorepo/biome-config": "workspace:*",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.2",
+    "@biomejs/biome": "2.5.0",
+    "npm-check-updates": "22.2.3"
+  },
+  "exports": {
+    "./components/*": {
+      "import": "./dist/components/*/index.mjs",
+      "types": "./dist/components/*/index.d.ts"
+    },
+    "./hooks/*": {
+      "import": "./dist/hooks/*/index.mjs",
+      "types": "./dist/hooks/*/index.d.ts"
+    }
+  }
+}

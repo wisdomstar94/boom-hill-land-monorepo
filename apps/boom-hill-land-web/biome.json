@@ -1,0 +1,7 @@
+{
+  "root": false,
+  "extends": [
+    "@boom-hill-land-monorepo/biome-config/base",
+    "@boom-hill-land-monorepo/biome-config/nextjs"
+  ]
+}

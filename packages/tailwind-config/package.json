@@ -1,0 +1,20 @@
+{
+  "name": "@boom-hill-land-monorepo/tailwind-config",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome format --write",
+    "ncu:update": "ncu -u --dep \"prod\",\"dev\",\"optional\",\"packageManager\",\"peer\""
+  },
+  "exports": {
+    "./globals.css": "./globals.css"
+  },
+  "devDependencies": {
+    "tailwindcss": "4.3.1",
+    "@biomejs/biome": "2.5.0",
+    "@boom-hill-land-monorepo/biome-config": "workspace:*",
+    "npm-check-updates": "22.2.3"
+  }
+}

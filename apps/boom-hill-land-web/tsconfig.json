@@ -1,0 +1,3 @@
+{
+  "extends": "@boom-hill-land-monorepo/typescript-config/nextjs"
+}

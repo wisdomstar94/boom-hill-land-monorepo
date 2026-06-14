@@ -1,0 +1,22 @@
+{
+  "name": "@boom-hill-land-monorepo/typescript-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome format --write",
+    "ncu:update": "ncu -u --dep \"prod\",\"dev\",\"optional\",\"packageManager\",\"peer\""
+  },
+  "exports": {
+    "./base": "./base.json",
+    "./nextjs": "./nextjs.json",
+    "./react": "./react.json"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "@biomejs/biome": "2.5.0",
+    "@boom-hill-land-monorepo/biome-config": "workspace:*",
+    "npm-check-updates": "22.2.3"
+  }
+}

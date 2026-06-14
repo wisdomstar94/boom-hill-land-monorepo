@@ -1,0 +1,20 @@
+{
+  "name": "@boom-hill-land-monorepo/vite-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome format --write",
+    "ncu:update": "ncu -u --dep \"prod\",\"dev\",\"optional\",\"packageManager\",\"peer\""
+  },
+  "devDependencies": {
+    "vite": "8.0.16",
+    "@biomejs/biome": "2.5.0",
+    "@boom-hill-land-monorepo/biome-config": "workspace:*",
+    "npm-check-updates": "22.2.3"
+  },
+  "exports": {
+    "./get-default-vite-config": "./get-default-vite-config.mjs"
+  }
+}
