@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { GifMaker } from "../../../components/gif-maker";
 import type { GifMakerTimelineInfo } from "../../../components/gif-maker/_types/gif-maker.types";
 import { CHARACTER_ANIMATIONS } from "../../../consts/characters/character-animation.consts";
@@ -25,13 +25,22 @@ type CharacterItem = {
   missAt: string | null;
 };
 
+type RankCharacterItem = {
+  characterTarget: CharacterTarget;
+  endedAtTimestamp: number;
+};
+
 export default function Page() {
   const [characterItems, setCharacterItems] = useState<CharacterItem[]>([]);
-  const [rankingCharacterTargets, setRankingCharacterTargets] = useState<CharacterTarget[]>([]);
+  const [rankingCharacterTargets, setRankingCharacterTargets] = useState<RankCharacterItem[]>([]);
+
+  const gameStartedTimestampRef = useRef<number>(0);
 
   const { characterSelectDialogComponent } = useCharacterSelectDialog({
     initialIsOpen: true,
     onCharacterSelectEnded(params) {
+      gameStartedTimestampRef.current = Date.now();
+
       setCharacterItems(
         params.selectedCharacterTargets.map((characterTarget) => {
           return {
@@ -81,7 +90,7 @@ export default function Page() {
   return (
     <>
       <div className="w-full h-full fixed top-0 left-0 box-border p-8 flex items-center justify-center">
-        <div className="h-[300px] max-h-full inline-flex max-w-[800px] gap-2">
+        <div className="h-[280px] max-h-[calc(100%-18px)] inline-flex max-w-[800px] gap-2">
           {characterItems.map((characterItem, characterIndex) => {
             return (
               <div
@@ -159,8 +168,15 @@ export default function Page() {
                         if (nextExplodedBallonCount >= characterItem.ballonTimelineInfos.length) {
                           setRankingCharacterTargets((prev) => {
                             const arr = [...prev];
-                            if (!arr.includes(characterItem.characterTarget)) {
-                              arr.push(characterItem.characterTarget);
+                            if (
+                              !arr.find(
+                                (item) => item.characterTarget === characterItem.characterTarget,
+                              )
+                            ) {
+                              arr.push({
+                                characterTarget: characterItem.characterTarget,
+                                endedAtTimestamp: Date.now(),
+                              });
                             }
                             return arr;
                           });
@@ -259,9 +275,26 @@ export default function Page() {
                   </div>
                 </div>
 
-                {rankingCharacterTargets.find((item) => item === characterItem.characterTarget) && (
+                {rankingCharacterTargets.find(
+                  (item) => item.characterTarget === characterItem.characterTarget,
+                ) && (
                   <div className="w-full absolute left-0 -bottom-7 text-center">
-                    {rankingCharacterTargets.indexOf(characterItem.characterTarget) + 1}등
+                    <div className="absolute left-1/2 bottom-full w-px flex items-center justify-center">
+                      <div className="text-nowrap whitespace-nowrap bg-red-600/70 text-white border border-gray-400 min-w-[50px]">
+                        {Math.floor(
+                          ((rankingCharacterTargets.find(
+                            (item) => item.characterTarget === characterItem.characterTarget,
+                          )?.endedAtTimestamp ?? 0) -
+                            gameStartedTimestampRef.current) /
+                            1000,
+                        )}
+                        초
+                      </div>
+                    </div>
+                    {rankingCharacterTargets.findIndex(
+                      (item) => item.characterTarget === characterItem.characterTarget,
+                    ) + 1}
+                    등
                   </div>
                 )}
               </div>

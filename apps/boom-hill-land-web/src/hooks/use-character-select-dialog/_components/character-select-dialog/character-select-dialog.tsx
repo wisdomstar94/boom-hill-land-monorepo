@@ -36,7 +36,7 @@ export function CharacterSelectDialog(props: {
         {/* content */}
         <div className="w-full flex-1 min-h-0 relative">
           <div className="w-full h-full relative box-border p-4">
-            <div className="w-full h-full grid grid-cols-4 grid-rows-2 gap-2 relative">
+            <div className="w-full h-full grid gap-2 relative grid-cols-2 min-[480px]:grid-cols-4">
               {/* 다오 */}
               <CharacterSelectItem
                 characterTarget={CHARACTER_TARGETS.DAO}
@@ -146,7 +146,7 @@ const CharacterSelectItem = (props: {
           loopCount={Number.POSITIVE_INFINITY}
         />
       </div>
-      <div className="shrink-0 grow-0 text-lg font-bold">{characterName}</div>
+      <div className="shrink-0 grow-0 text-sm font-bold">{characterName}</div>
       {isSelected ? (
         <div className="absolute top-1 right-1">
           <div className="size-7 rounded-full bg-blue-500 text-white flex items-center justify-center text-xl">
