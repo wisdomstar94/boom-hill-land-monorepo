@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { GifMaker } from "../../../../components/gif-maker";
 import {
   CHARACTER_ANIMATIONS,
@@ -34,7 +35,7 @@ export function CharacterSelectDialog(props: {
         </div>
         {/* content */}
         <div className="w-full flex-1 min-h-0 relative">
-          <div className="w-full h-full relative">
+          <div className="w-full h-full relative box-border p-4">
             <div className="w-full h-full grid grid-cols-4 grid-rows-2 gap-2 relative">
               {/* 다오 */}
               <CharacterSelectItem
@@ -120,6 +121,12 @@ const CharacterSelectItem = (props: {
 
   const index = selectedCharacterTargets.indexOf(characterTarget);
   const isSelected = index !== -1;
+  const timelineInfo = useMemo(() => {
+    return getCharacterTimelineInfo({
+      target: characterTarget,
+      animation: characterAnimation,
+    });
+  }, [characterTarget, characterAnimation]);
 
   return (
     <button
@@ -131,21 +138,18 @@ const CharacterSelectItem = (props: {
       <div className="flex-1 min-h-0">
         <GifMaker
           classNames={{
-            root: "outline outline-red-500 h-full aspect-140/200",
+            root: "h-full aspect-140/200",
             imagesContainer: "scale-150 origin-center",
             image: "",
           }}
-          timelineInfo={getCharacterTimelineInfo({
-            target: characterTarget,
-            animation: characterAnimation,
-          })}
+          timelineInfo={timelineInfo}
           loopCount={Number.POSITIVE_INFINITY}
         />
       </div>
-      <div className="shrink-0 grow-0">{characterName}</div>
+      <div className="shrink-0 grow-0 text-lg font-bold">{characterName}</div>
       {isSelected ? (
-        <div className="absolute top-0 right-0">
-          <div className="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center">
+        <div className="absolute top-1 right-1">
+          <div className="size-7 rounded-full bg-blue-500 text-white flex items-center justify-center text-xl">
             {index + 1}
           </div>
         </div>
