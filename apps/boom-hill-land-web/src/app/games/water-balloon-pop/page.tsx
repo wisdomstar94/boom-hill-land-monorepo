@@ -23,6 +23,7 @@ type CharacterItem = {
   throwAt: string | null;
   hitAt: string | null;
   missAt: string | null;
+  throwCount: number;
 };
 
 type RankCharacterItem = {
@@ -81,6 +82,7 @@ export default function Page() {
             hitAt: null,
             missAt: null,
             explodedBallonCount: 0,
+            throwCount: 0,
           };
         }),
       );
@@ -141,6 +143,7 @@ export default function Page() {
                                   return {
                                     ...prevCharacterItem,
                                     throwAt: new Date().toISOString(),
+                                    throwCount: prevCharacterItem.throwCount + 1,
                                   };
                                 }
                                 return prevCharacterItem;
@@ -279,8 +282,9 @@ export default function Page() {
                   (item) => item.characterTarget === characterItem.characterTarget,
                 ) && (
                   <div className="w-full absolute left-0 -bottom-7 text-center">
-                    <div className="absolute left-1/2 bottom-full w-px flex items-center justify-center">
-                      <div className="text-nowrap whitespace-nowrap bg-red-600/70 text-white border border-gray-400 min-w-[50px]">
+                    <div className="absolute left-1/2 bottom-full w-px flex items-center justify-center text-sm">
+                      <div className="text-nowrap whitespace-nowrap bg-red-600/70 text-white border border-gray-400 min-w-[80px]">
+                        {characterItem.throwCount}회&nbsp;/&nbsp;
                         {Math.floor(
                           ((rankingCharacterTargets.find(
                             (item) => item.characterTarget === characterItem.characterTarget,
