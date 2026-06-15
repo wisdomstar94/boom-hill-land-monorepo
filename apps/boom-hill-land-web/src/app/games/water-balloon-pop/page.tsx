@@ -98,7 +98,7 @@ export default function Page() {
               <div
                 // biome-ignore lint/suspicious/noArrayIndexKey: _
                 key={characterIndex}
-                className="w-[80px] h-full relative flex flex-col border border-green-500"
+                className="w-[80px] h-full relative flex flex-col border border-gray-400"
               >
                 <div className="relative flex flex-wrap gap-1 shrink-0 grow-0 justify-center">
                   {characterItem.ballonTimelineInfos.map((item, itemIndex) => {
@@ -123,7 +123,7 @@ export default function Page() {
                   <div className="inline-flex relative w-full">
                     <GifMaker
                       classNames={{
-                        root: "outline outline-red-500 w-full aspect-140/200",
+                        root: "w-full aspect-140/200",
                         imagesContainer: "scale-150 origin-center",
                         image: "",
                       }}
