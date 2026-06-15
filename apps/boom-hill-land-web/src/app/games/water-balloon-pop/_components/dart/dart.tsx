@@ -26,7 +26,7 @@ export function Dart(props: DartProps) {
     const timeline = createTimeline({
       onComplete: () => {
         const value = getRandomNumber({ min: 0, max: 100 });
-        if (value <= 20) {
+        if (value <= 33) {
           onDartHit();
         } else {
           onDartMiss();
