@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { BASE_PATH } from "../consts/urls/base-path";
 
 export const metadata: Metadata = {
   title: "붐힐랜드",
   description: "붐힐랜드의 다양한 게임을 즐겨보세요!",
+  manifest: `${BASE_PATH}/manifest.webmanifest`,
 };
 
 export default function RootLayout({
