@@ -283,16 +283,18 @@ export default function Page() {
                 ) && (
                   <div className="w-full absolute left-0 -bottom-7 text-center">
                     <div className="absolute left-1/2 bottom-full w-px flex items-center justify-center text-sm">
-                      <div className="text-nowrap whitespace-nowrap bg-red-600/70 text-white border border-gray-400 min-w-[80px]">
-                        {characterItem.throwCount}회&nbsp;/&nbsp;
-                        {Math.floor(
-                          ((rankingCharacterTargets.find(
-                            (item) => item.characterTarget === characterItem.characterTarget,
-                          )?.endedAtTimestamp ?? 0) -
-                            gameStartedTimestampRef.current) /
-                            1000,
-                        )}
-                        초
+                      <div className="text-nowrap whitespace-nowrap bg-red-600/70 text-white border border-gray-400 min-w-[80px] flex flex-col items-center">
+                        <div>{characterItem.throwCount}회</div>
+                        <div>
+                          {(
+                            ((rankingCharacterTargets.find(
+                              (item) => item.characterTarget === characterItem.characterTarget,
+                            )?.endedAtTimestamp ?? 0) -
+                              gameStartedTimestampRef.current) /
+                            1000
+                          ).toFixed(3)}
+                          초
+                        </div>
                       </div>
                     </div>
                     {rankingCharacterTargets.findIndex(

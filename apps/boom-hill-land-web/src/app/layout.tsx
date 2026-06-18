@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { version } from "../../package.json";
 import { BASE_PATH } from "../consts/urls/base-path";
 
 export const metadata: Metadata = {
@@ -15,7 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className="min-h-full flex flex-col font-gothic-a1">{children}</body>
+      <body className="min-h-full flex flex-col font-gothic-a1" data-version={version}>
+        {children}
+      </body>
     </html>
   );
 }
