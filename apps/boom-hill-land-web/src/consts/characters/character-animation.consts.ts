@@ -1,6 +1,7 @@
 export const CHARACTER_ANIMATIONS = {
   IDLE: "idle",
   THROW_BALLON: "throw-ballon",
+  RUNNING_PREPARE: "running-prepare",
 } as const;
 
 export type CharacterAnimation = (typeof CHARACTER_ANIMATIONS)[keyof typeof CHARACTER_ANIMATIONS];
