@@ -1,6 +1,6 @@
 {
   "name": "@boom-hill-land-monorepo/boom-hill-land-web",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "private": true,
   "scripts": {
     "next:dev": "cross-env NEXT_PUBLIC_IS_LOCAL=true next dev",
@@ -15,7 +15,8 @@
     "animejs": "4.4.1",
     "next": "16.2.9",
     "react": "19.2.7",
-    "react-dom": "19.2.7"
+    "react-dom": "19.2.7",
+    "date-fns": "4.4.0"
   },
   "devDependencies": {
     "cross-env": "10.1.0",

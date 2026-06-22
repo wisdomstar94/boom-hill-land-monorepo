@@ -22,6 +22,8 @@ export function useCharacterSelectDialog(props: {
               const arr = [...prev];
               if (!arr.includes(characterTarget)) {
                 arr.push(characterTarget);
+              } else {
+                arr.splice(arr.indexOf(characterTarget), 1);
               }
               return arr;
             });
