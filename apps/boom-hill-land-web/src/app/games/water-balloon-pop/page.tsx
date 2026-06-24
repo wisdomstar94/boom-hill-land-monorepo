@@ -165,7 +165,6 @@ export default function Page() {
                     <Dart
                       throwAt={characterItem.throwAt}
                       onDartHit={() => {
-                        console.log("dart hit");
                         const nextExplodedBallonCount = characterItem.explodedBallonCount + 1;
 
                         if (nextExplodedBallonCount >= characterItem.ballonTimelineInfos.length) {
@@ -245,7 +244,6 @@ export default function Page() {
                         });
                       }}
                       onDartMiss={() => {
-                        console.log("dart miss");
                         setCharacterItems((prevCharacterItems) => {
                           return prevCharacterItems.map((prevCharacterItem, prevCharacterIndex) => {
                             if (prevCharacterIndex === characterIndex) {

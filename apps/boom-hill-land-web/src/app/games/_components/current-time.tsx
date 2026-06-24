@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
 export function CurrentTime() {
-  const [currentTime, setCurrentTime] = useState<string>(format(new Date(), "yyyy-MM-dd HH:mm:ss"));
+  const [currentTime, setCurrentTime] = useState<string>("");
 
   useEffect(() => {
     const interval = setInterval(() => {
