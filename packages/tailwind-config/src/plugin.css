@@ -1,3 +1,5 @@
+@plugin "./height-variants.js";
+
 @theme {
   --font-gothic-a1: "Gothic A1", sans-serif;
 
@@ -26,4 +28,27 @@
       opacity: 1;
     }
   }
+}
+
+/* 스크롤바 숨김 (스크롤 동작은 유지) */
+@utility scrollbar-hide {
+  -ms-overflow-style: none; /* IE, 구형 Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, 신형 Edge */
+  }
+}
+
+/* 커스텀 그라디언트 색상 — 색상값/방향/이름은 자유롭게 수정 */
+@theme {
+  --color-custom-gradient-from: #ff7e5f;
+  --color-custom-gradient-to: #feb47b;
+}
+
+@utility bg-custom-gradient {
+  background-image: linear-gradient(
+    to right,
+    var(--color-custom-gradient-from),
+    var(--color-custom-gradient-to)
+  );
 }

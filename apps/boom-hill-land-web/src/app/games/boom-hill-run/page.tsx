@@ -6,7 +6,10 @@ import { GameStartCountDown } from "../../../components/game-start-count-down";
 import { GifMakerV2 } from "../../../components/gif-maker-v2";
 import type { GifMakerV2TimelineInfo } from "../../../components/gif-maker-v2/_types";
 import { CHARACTER_ANIMATIONS } from "../../../consts/characters/character-animation.consts";
-import type { CharacterTarget } from "../../../consts/characters/character-target.consts";
+import {
+  CHARACTER_TARGET_NAMES,
+  type CharacterTarget,
+} from "../../../consts/characters/character-target.consts";
 import { useCharacterSelectDialog } from "../../../hooks/use-character-select-dialog";
 import { useRequestAnimationFrameManager } from "../../../hooks/use-request-animation-frame-manager";
 import { getCharacterImages } from "../../../macros/character/get-character-images";
@@ -250,38 +253,51 @@ export default function Page() {
         {/* field */}
         <div className="w-[calc(100%-28px)] h-[calc(100%-28px)] rounded-md relative flex items-center justify-center">
           {/* scroll container */}
-          <div className="w-full overflow-x-scroll block relative" ref={scrollContainerRef}>
+          <div
+            className="w-full overflow-x-scroll scrollbar-hide block relative"
+            ref={scrollContainerRef}
+          >
             <div className="w-[1200px] h-auto relative">
               <div className="w-full h-auto flex flex-col gap-1.5 relative items-start py-10">
                 {characterItems.map((characterItem) => {
+                  const rank =
+                    rankingCharacterTargets.findIndex(
+                      (item) => item.characterTarget === characterItem.characterTarget,
+                    ) + 1;
+
                   return (
                     <div
                       key={characterItem.characterTarget}
-                      className="w-full relative pl-2 box-border bg-gray-100"
+                      className="h-[28px] hmin-[326px]:h-[32px] hmin-[360px]:h-[36px] hmin-[400px]:h-[40px] min- w-full relative pl-2 box-border bg-gray-100"
                     >
                       <div className="w-[300px] absolute h-full bottom-0 right-0 flex justify-end">
                         {characterItem.goalPassedAt !== null && (
-                          <div className="h-full bottom-0 right-0 bg-black/60 text-white text-xs text-left inline-flex gap-1 items-center animate-width-fade-in overflow-hidden">
-                            <div className="w-[300px] relative h-full">
-                              <div className="w-full h-full items-center flex gap-1 box-border pl-1">
-                                <div className="shrink-0 grow-0 font-extrabold text-lg">
-                                  {rankingCharacterTargets.findIndex(
-                                    (item) =>
-                                      item.characterTarget === characterItem.characterTarget,
-                                  ) + 1}
-                                  등
-                                </div>
-                                <div className="shrink-0 grow-0 text-sm">
-                                  (
-                                  {(
-                                    ((rankingCharacterTargets.find(
-                                      (item) =>
-                                        item.characterTarget === characterItem.characterTarget,
-                                    )?.endedAtTimestamp ?? 0) -
-                                      gameStartedTimestampRef.current) /
-                                    1000
-                                  ).toFixed(3)}
-                                  초 / {characterItem.fallDownCount}번 넘어짐)
+                          <div
+                            data-rank-first={rank === 1}
+                            data-rank-last={rank === characterItems.length}
+                            className="h-full bottom-0 right-0 bg-black/60 data-[rank-first=true]:bg-custom-gradient data-[rank-first=true]:[--color-custom-gradient-from:#b18cff] data-[rank-first=true]:[--color-custom-gradient-to:#5ac8c8] data-[rank-last=true]:bg-custom-gradient data-[rank-last=true]:[--color-custom-gradient-from:#ff5e62] data-[rank-last=true]:[--color-custom-gradient-to:#ff9966] text-white text-xs text-left inline-flex gap-1 items-center animate-width-fade-in overflow-hidden"
+                          >
+                            <div className="w-[300px] relative h-full flex flex-col pl-1">
+                              <div className="text-xs underline">
+                                {CHARACTER_TARGET_NAMES[characterItem.characterTarget]}
+                              </div>
+                              <div className="flex gap-1">
+                                <div className="w-full h-full items-center flex gap-1 box-border">
+                                  <div className="text-xs hmin-[326px]:text-lg shrink-0 grow-0 font-extrabold">
+                                    {rank}등
+                                  </div>
+                                  <div className="text-xs hmin-[326px]text-sm shrink-0 grow-0">
+                                    (
+                                    {(
+                                      ((rankingCharacterTargets.find(
+                                        (item) =>
+                                          item.characterTarget === characterItem.characterTarget,
+                                      )?.endedAtTimestamp ?? 0) -
+                                        gameStartedTimestampRef.current) /
+                                      1000
+                                    ).toFixed(3)}
+                                    초 / {characterItem.fallDownCount}번 넘어짐)
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -290,7 +306,7 @@ export default function Page() {
                       </div>
 
                       <AnimationDiv
-                        className="animation-div w-auto! h-[38px]! inline-flex items-end box-border pb-2"
+                        className="animation-div w-auto! h-full! shrink-0 grow-0 inline-flex items-end box-border pb-2"
                         animationParams={characterItem.characterMovingAnimationInfo}
                         onComplete={() => {
                           const isNextFallDown = getRandomNumber({ min: 0, max: 100 }) <= 10;
@@ -357,7 +373,7 @@ export default function Page() {
                             };
                           })}
                           classNames={{
-                            root: `w-[42px] aspect-140/200 character-box character-${characterItem.characterTarget}`,
+                            root: `w-[27px] hmin-[326px]:w-[29px] hmin-[360px]:w-[34px] hmin-[400px]:w-[38px] shrink-0 grow-0 aspect-140/200 character-box character-${characterItem.characterTarget}`,
                             image: "scale-170",
                           }}
                           timelineInfo={characterItem.characterTimelineInfo}
