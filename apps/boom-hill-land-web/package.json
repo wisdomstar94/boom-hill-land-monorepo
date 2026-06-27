@@ -21,6 +21,7 @@
   "devDependencies": {
     "cross-env": "10.1.0",
     "@biomejs/biome": "2.5.0",
+    "babel-plugin-react-compiler": "1.0.0",
     "@boom-hill-land-monorepo/biome-config": "workspace:*",
     "@boom-hill-land-monorepo/react-ui": "workspace:*",
     "@boom-hill-land-monorepo/tailwind-config": "workspace:*",

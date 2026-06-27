@@ -1,5 +1,7 @@
 "use client";
 
+import { animate, type JSAnimation } from "animejs";
+import NextImage from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { AnimationDiv, type AnimationDivProps } from "../../../components/animation-div";
 import { GameStartCountDown } from "../../../components/game-start-count-down";
@@ -10,11 +12,14 @@ import {
   CHARACTER_TARGET_NAMES,
   type CharacterTarget,
 } from "../../../consts/characters/character-target.consts";
+import { BASE_PATH } from "../../../consts/urls/base-path";
 import { useCharacterSelectDialog } from "../../../hooks/use-character-select-dialog";
 import { useRequestAnimationFrameManager } from "../../../hooks/use-request-animation-frame-manager";
 import { getCharacterImages } from "../../../macros/character/get-character-images";
 import { getCharacterTimelineInfo } from "../../../macros/character/get-character-timeline-info";
 import { getRandomNumber } from "../../../macros/get-random-number";
+import { Owl } from "./_components/owl";
+import { Turtle } from "./_components/turtle";
 
 type CharacterItem = {
   characterTarget: CharacterTarget;
@@ -47,6 +52,8 @@ const MOVE_ANIMATION_NAMES = {
   WALK: "WALK",
 } as const;
 
+const FIELD_WIDTH = 1200;
+
 export default function Page() {
   const [countStart, setCountStart] = useState(false);
   const [gameStart, setGameStart] = useState(false);
@@ -73,18 +80,20 @@ export default function Page() {
 
   const gameStartedTimestampRef = useRef<number>(0);
   const goalRef = useRef<HTMLDivElement>(null);
-  const goalClientRectRef = useRef<DOMRect | null>(null);
+  // const goalClientRectRef = useRef<DOMRect | null>(null);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const scrollContainerLeftRef = useRef<number>(0);
+  const animateObjRef = useRef<JSAnimation | null>(null);
 
   const requestAnimationFrameManager = useRequestAnimationFrameManager({
     isAutoStart: false,
     callback: () => {
-      if (goalClientRectRef.current === null) {
+      if (scrollContainerRef.current === null) {
         return;
       }
-      if (scrollContainerRef.current === null) {
+
+      const goalElement = goalRef.current;
+      if (goalElement === null) {
         return;
       }
 
@@ -111,14 +120,16 @@ export default function Page() {
           bestMovedCharacterBoxElementClientRect.x + bestMovedCharacterBoxElementClientRect.width;
 
         if (
-          scrollContainerEndX - bestMovedCharacterBoxElementEndX < 100 &&
+          scrollContainerEndX - bestMovedCharacterBoxElementEndX < 200 &&
           scrollContainerRef.current.scrollWidth >
-            scrollContainerRef.current.clientWidth + scrollContainerLeftRef.current
+            scrollContainerRef.current.clientWidth + scrollContainerRef.current.scrollLeft
         ) {
-          scrollContainerLeftRef.current += 2;
-          scrollContainerRef.current.scrollTo({
-            left: scrollContainerLeftRef.current,
-          });
+          if (animateObjRef.current === null || animateObjRef.current.completed === true) {
+            animateObjRef.current = animate(scrollContainerRef.current, {
+              scrollLeft: "+=1",
+              duration: 5,
+            });
+          }
         }
       }
 
@@ -136,7 +147,7 @@ export default function Page() {
 
         if (
           characterParentElement.offsetLeft + characterParentElement.clientWidth >
-            (goalRef.current?.offsetLeft ?? 0) &&
+            goalElement.offsetLeft &&
           rankingCharacterTargetsRef.current.find(
             (item) => item.characterTarget === characterItem.characterTarget,
           ) === undefined
@@ -205,7 +216,6 @@ export default function Page() {
 
   function onStart() {
     requestAnimationFrameManager.start();
-    goalClientRectRef.current = goalRef.current?.getBoundingClientRect() ?? null;
     setCharacterItems((prev) => {
       return prev.map((characterItem) => {
         const randomMarginLeft = getRandomNumber({
@@ -247,29 +257,70 @@ export default function Page() {
     onStart();
   }, [gameStart]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: _
+  useEffect(() => {
+    if (rankingCharacterTargets.length === characterItems.length) {
+      // 게임 종료
+      requestAnimationFrameManager.stop();
+    }
+  }, [rankingCharacterTargets]);
+
   return (
     <>
-      <div className="w-full h-full fixed top-0 left-0 flex items-center justify-center">
+      <div className="w-full h-full fixed top-0 left-0 flex items-center justify-center box-border">
         {/* field */}
-        <div className="w-[calc(100%-28px)] h-[calc(100%-28px)] rounded-md relative flex items-center justify-center">
+        <div className="w-full h-full relative flex items-center justify-center">
           {/* scroll container */}
           <div
-            className="w-full overflow-x-scroll scrollbar-hide block relative"
+            className="w-full h-full overflow-x-scroll scrollbar-hide flex relative items-center"
             ref={scrollContainerRef}
           >
-            <div className="w-[1200px] h-auto relative">
-              <div className="w-full h-auto flex flex-col gap-1.5 relative items-start py-10">
+            <div
+              className="h-full absolute top-0 left-0"
+              style={{
+                width: `${FIELD_WIDTH + 100}px`,
+                backgroundImage: `url('${BASE_PATH}/background/ground/soil-ground.png')`,
+                backgroundSize: "200px auto",
+                backgroundRepeat: "repeat",
+                backgroundPosition: "center",
+              }}
+            />
+
+            <div className="w-10 h-px shrink-0 grow-0" />
+            <div
+              className="h-auto relative shrink-0 grow-0 box-border"
+              style={{ width: `${FIELD_WIDTH}px` }}
+            >
+              <div className="w-full h-auto flex flex-col gap-1.5 relative items-start py-14">
                 {characterItems.map((characterItem) => {
+                  // 순위
                   const rank =
                     rankingCharacterTargets.findIndex(
                       (item) => item.characterTarget === characterItem.characterTarget,
                     ) + 1;
 
+                  // 완주까지 걸린 소요 시간
+                  const takeUntilSecond =
+                    ((rankingCharacterTargets.find(
+                      (item) => item.characterTarget === characterItem.characterTarget,
+                    )?.endedAtTimestamp ?? 0) -
+                      gameStartedTimestampRef.current) /
+                    1000;
+
                   return (
                     <div
                       key={characterItem.characterTarget}
-                      className="h-[28px] hmin-[326px]:h-[32px] hmin-[360px]:h-[36px] hmin-[400px]:h-[40px] min- w-full relative pl-2 box-border bg-gray-100"
+                      className="h-[28px] hmin-[326px]:h-[32px] hmin-[360px]:h-[36px] hmin-[400px]:h-[40px] min- w-full relative pl-2 box-border"
                     >
+                      <div
+                        className="w-[calc(100%-14px)] h-2.5 left-0 -bottom-2.5 absolute"
+                        style={{
+                          backgroundImage: `url('${BASE_PATH}/paint/spray-line/spray-white-line.png')`,
+                          backgroundSize: "100px auto",
+                          backgroundRepeat: "repeat",
+                          backgroundPosition: "center",
+                        }}
+                      ></div>
                       <div className="w-[300px] absolute h-full bottom-0 right-0 flex justify-end">
                         {characterItem.goalPassedAt !== null && (
                           <div
@@ -287,16 +338,8 @@ export default function Page() {
                                     {rank}등
                                   </div>
                                   <div className="text-xs hmin-[326px]text-sm shrink-0 grow-0">
-                                    (
-                                    {(
-                                      ((rankingCharacterTargets.find(
-                                        (item) =>
-                                          item.characterTarget === characterItem.characterTarget,
-                                      )?.endedAtTimestamp ?? 0) -
-                                        gameStartedTimestampRef.current) /
-                                      1000
-                                    ).toFixed(3)}
-                                    초 / {characterItem.fallDownCount}번 넘어짐)
+                                    ({takeUntilSecond.toFixed(3)}초 / {characterItem.fallDownCount}
+                                    번 넘어짐)
                                   </div>
                                 </div>
                               </div>
@@ -309,8 +352,13 @@ export default function Page() {
                         className="animation-div w-auto! h-full! shrink-0 grow-0 inline-flex items-end box-border pb-2"
                         animationParams={characterItem.characterMovingAnimationInfo}
                         onComplete={() => {
+                          // 다음에 넘어지는가?
                           const isNextFallDown = getRandomNumber({ min: 0, max: 100 }) <= 10;
+
+                          // 다음에 달리는가?
                           const isNextRun = getRandomNumber({ min: 0, max: 100 }) <= 45;
+
+                          // 다음에 이동할 거리
                           const randomMarginLeft = getRandomNumber({
                             min: RANDOM_MOVE_MARGIN_LEFT_MIN,
                             max: RANDOM_MOVE_MARGIN_LEFT_MAX,
@@ -450,9 +498,63 @@ export default function Page() {
               {/* goal */}
               <div
                 ref={goalRef}
-                className="bg-red-500 text-white w-[32px] text-xs h-full absolute right-0 top-0 flex items-center justify-center"
+                data-goal={true}
+                className="text-white w-[36px] text-xs h-full absolute -right-8 top-0 flex items-center justify-center"
               >
-                Goal
+                {/* top */}
+                <div className="w-full absolute -top-2 left-0">
+                  <Owl />
+                </div>
+
+                {/* rope */}
+                <div
+                  className="w-[10px] h-[calc(100%-64px)] top-8 left-[calc(50%-5px)] absolute bg-blue-500"
+                  style={{
+                    backgroundImage: `url('${BASE_PATH}/things/rope/rope-unit.png')`,
+                    backgroundSize: "10px auto",
+                    backgroundRepeat: "repeat",
+                    backgroundPosition: "center",
+                  }}
+                >
+                  {/* goal flag */}
+                  <div className="w-5 h-full absolute top-0 -left-4 flex flex-col min-h-0">
+                    {/* head */}
+                    <NextImage
+                      src={`${BASE_PATH}/things/goal-flag/goal-flag-head.png`}
+                      alt="flag head"
+                      width={100}
+                      height={100}
+                      className="w-full h-auto shrink-0 grow-0"
+                    />
+                    {/* body */}
+                    <div
+                      className="w-full h-full flex items-center justify-center"
+                      style={{
+                        backgroundImage: `url('${BASE_PATH}/things/goal-flag/goal-flag-body.png')`,
+                        backgroundSize: "100% auto",
+                        backgroundRepeat: "repeat",
+                        backgroundPosition: "center",
+                      }}
+                    >
+                      <div className="text-white text-sm font-bold">
+                        골<br />인
+                      </div>
+                    </div>
+                    {/* tail */}
+                    <NextImage
+                      src={`${BASE_PATH}/things/goal-flag/goal-flag-tail.png`}
+                      alt="flag head"
+                      width={100}
+                      height={100}
+                      className="w-full h-auto shrink-0 grow-0"
+                    />
+                  </div>
+                </div>
+
+                {/* bottom */}
+                <div className="w-full absolute bottom-0 left-0">
+                  <Turtle />
+                </div>
               </div>
             </div>
           </div>

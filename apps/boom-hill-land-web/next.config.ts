@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.0.94"],
   trailingSlash: true,
   basePath: process.env.NEXT_PUBLIC_IS_LOCAL === "true" ? undefined : BASE_PATH,
+  reactCompiler: true,
 };
 
 export default nextConfig;
