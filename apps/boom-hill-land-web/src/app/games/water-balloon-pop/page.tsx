@@ -1,8 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { GifMaker } from "../../../components/gif-maker";
-import type { GifMakerTimelineInfo } from "../../../components/gif-maker/_types/gif-maker.types";
+import { GifMakerV2 } from "../../../components/gif-maker-v2";
+import type { GifMakerV2TimelineInfo } from "../../../components/gif-maker-v2/_types";
 import { CHARACTER_ANIMATIONS } from "../../../consts/characters/character-animation.consts";
 import {
   CHARACTER_TARGET_NAMES,
@@ -10,15 +10,16 @@ import {
 } from "../../../consts/characters/character-target.consts";
 import { BASE_PATH } from "../../../consts/urls/base-path";
 import { useCharacterSelectDialog } from "../../../hooks/use-character-select-dialog";
-import { getCharacterTimelineInfo } from "../../../macros/get-character-timeline-info";
+import { getCharacterImages } from "../../../macros/character/get-character-images";
+import { getCharacterTimelineInfo } from "../../../macros/character/get-character-timeline-info";
 import { Dart } from "./_components/dart/dart";
 import { Hit } from "./_components/hit/hit";
 import { Miss } from "./_components/miss/miss";
 
 type CharacterItem = {
   characterTarget: CharacterTarget;
-  characterTimelineInfo: GifMakerTimelineInfo;
-  ballonTimelineInfos: GifMakerTimelineInfo[];
+  characterTimelineInfo: GifMakerV2TimelineInfo;
+  ballonTimelineInfos: GifMakerV2TimelineInfo[];
   explodedBallonCount: number;
   throwAt: string | null;
   hitAt: string | null;
@@ -50,6 +51,7 @@ export default function Page() {
               target: characterTarget,
               animation: CHARACTER_ANIMATIONS.THROW_BALLON,
               isRandomSpeed: true,
+              loopCount: 0,
             }),
             ballonTimelineInfos: Array.from({ length: 5 }).map(() => {
               return {
@@ -76,6 +78,7 @@ export default function Page() {
                     durationMs: 200,
                   },
                 ],
+                loopCount: Number.POSITIVE_INFINITY,
               };
             }),
             throwAt: null,
@@ -103,15 +106,20 @@ export default function Page() {
                 <div className="relative flex flex-wrap gap-1 shrink-0 grow-0 justify-center">
                   {characterItem.ballonTimelineInfos.map((item, itemIndex) => {
                     return (
-                      <GifMaker
+                      <GifMakerV2
                         key={`${item.timelineName}-${
                           // biome-ignore lint/suspicious/noArrayIndexKey: _
                           itemIndex
                         }`}
+                        imageSources={[
+                          { imageUrl: `${BASE_PATH}/things/ballon/ballon-001.png` },
+                          { imageUrl: `${BASE_PATH}/things/ballon/ballon-002.png` },
+                          { imageUrl: `${BASE_PATH}/things/ballon/ballon-003.png` },
+                          { imageUrl: `${BASE_PATH}/things/ballon-explode/ballon-explode-001.png` },
+                          { imageUrl: `${BASE_PATH}/things/ballon-explode/ballon-explode-002.png` },
+                          { imageUrl: `${BASE_PATH}/things/ballon-explode/ballon-explode-003.png` },
+                        ]}
                         timelineInfo={item}
-                        loopCount={
-                          item.timelineName === "ballon-exploded" ? 0 : Number.POSITIVE_INFINITY
-                        }
                         classNames={{
                           root: "size-[28px]",
                         }}
@@ -121,21 +129,23 @@ export default function Page() {
                 </div>
                 <div className="w-full flex-1 min-h-0 flex items-end">
                   <div className="inline-flex relative w-full">
-                    <GifMaker
+                    <GifMakerV2
+                      imageSources={getCharacterImages({
+                        target: characterItem.characterTarget,
+                      }).map((value) => {
+                        return {
+                          imageUrl: value,
+                        };
+                      })}
                       classNames={{
                         root: "w-full aspect-140/200",
                         imagesContainer: "scale-150 origin-center",
                         image: "",
                       }}
                       timelineInfo={characterItem.characterTimelineInfo}
-                      loopCount={
-                        characterItem.characterTimelineInfo.timelineName.includes("idle")
-                          ? Number.POSITIVE_INFINITY
-                          : 0
-                      }
                       onTimelineStarted={(params) => {
-                        const { timelineUniqueKey } = params;
-                        if (timelineUniqueKey === "throw-003") {
+                        const { imageUrl } = params;
+                        if (imageUrl.includes("throw-ballon-003")) {
                           setCharacterItems((prevCharacterItems) => {
                             return prevCharacterItems.map(
                               (prevCharacterItem, prevCharacterIndex) => {
@@ -195,11 +205,13 @@ export default function Page() {
                                     ? getCharacterTimelineInfo({
                                         target: prevCharacterItem.characterTarget,
                                         animation: CHARACTER_ANIMATIONS.IDLE,
+                                        loopCount: Number.POSITIVE_INFINITY,
                                       })
                                     : getCharacterTimelineInfo({
                                         target: prevCharacterItem.characterTarget,
                                         animation: CHARACTER_ANIMATIONS.THROW_BALLON,
                                         isRandomSpeed: true,
+                                        loopCount: 0,
                                       }),
                                 explodedBallonCount: nextExplodedBallonCount,
                                 hitAt: new Date().toISOString(),
@@ -217,22 +229,20 @@ export default function Page() {
                                         timelineName: "ballon-exploded",
                                         timelines: [
                                           {
-                                            uniqueKey: "001",
                                             imageUrl: `${BASE_PATH}/things/ballon-explode/ballon-explode-001.png`,
                                             durationMs: 100,
                                           },
                                           {
-                                            uniqueKey: "002",
                                             imageUrl: `${BASE_PATH}/things/ballon-explode/ballon-explode-002.png`,
                                             durationMs: 100,
                                           },
                                           {
-                                            uniqueKey: "003",
                                             imageUrl: `${BASE_PATH}/things/ballon-explode/ballon-explode-003.png`,
                                             durationMs: 100,
                                           },
                                         ],
-                                      } satisfies typeof ballonTimelineInfo;
+                                        loopCount: 0,
+                                      };
                                     }
                                     return ballonTimelineInfo;
                                   },
@@ -253,6 +263,7 @@ export default function Page() {
                                   target: prevCharacterItem.characterTarget,
                                   animation: CHARACTER_ANIMATIONS.THROW_BALLON,
                                   isRandomSpeed: true,
+                                  loopCount: 0,
                                 }),
                                 missAt: new Date().toISOString(),
                               };

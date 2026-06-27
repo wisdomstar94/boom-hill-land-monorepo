@@ -3,18 +3,19 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimationDiv, type AnimationDivProps } from "../../../components/animation-div";
 import { GameStartCountDown } from "../../../components/game-start-count-down";
-import { GifMaker } from "../../../components/gif-maker";
-import type { GifMakerTimelineInfo } from "../../../components/gif-maker/_types/gif-maker.types";
+import { GifMakerV2 } from "../../../components/gif-maker-v2";
+import type { GifMakerV2TimelineInfo } from "../../../components/gif-maker-v2/_types";
 import { CHARACTER_ANIMATIONS } from "../../../consts/characters/character-animation.consts";
 import type { CharacterTarget } from "../../../consts/characters/character-target.consts";
 import { useCharacterSelectDialog } from "../../../hooks/use-character-select-dialog";
 import { useRequestAnimationFrameManager } from "../../../hooks/use-request-animation-frame-manager";
-import { getCharacterTimelineInfo } from "../../../macros/get-character-timeline-info";
+import { getCharacterImages } from "../../../macros/character/get-character-images";
+import { getCharacterTimelineInfo } from "../../../macros/character/get-character-timeline-info";
 import { getRandomNumber } from "../../../macros/get-random-number";
 
 type CharacterItem = {
   characterTarget: CharacterTarget;
-  characterTimelineInfo: GifMakerTimelineInfo;
+  characterTimelineInfo: GifMakerV2TimelineInfo;
   characterMovingAnimationInfo: AnimationDivProps["animationParams"];
   fallDownAt: string | null;
   fallDownCount: number;
@@ -113,6 +114,7 @@ export default function Page() {
                   characterTimelineInfo: getCharacterTimelineInfo({
                     target: prevCharacterItem.characterTarget,
                     animation: CHARACTER_ANIMATIONS.IDLE,
+                    loopCount: Number.POSITIVE_INFINITY,
                   }),
                 };
               }
@@ -136,6 +138,7 @@ export default function Page() {
             characterTimelineInfo: getCharacterTimelineInfo({
               target: characterTarget,
               animation: CHARACTER_ANIMATIONS.RUNNING_PREPARE,
+              loopCount: Number.POSITIVE_INFINITY,
             }),
             characterMovingAnimationInfo: {
               animationName: MOVE_ANIMATION_NAMES.STOP,
@@ -170,6 +173,7 @@ export default function Page() {
             animation: isRun(randomMarginLeft)
               ? CHARACTER_ANIMATIONS.RUN
               : CHARACTER_ANIMATIONS.WALK,
+            loopCount: Number.POSITIVE_INFINITY,
           }),
           characterMovingAnimationInfo: {
             ...characterItem.characterMovingAnimationInfo,
@@ -204,161 +208,174 @@ export default function Page() {
         <div className="w-[calc(100%-28px)] h-[calc(100%-28px)] rounded-md relative flex items-center justify-center">
           {/* scroll container */}
           <div className="w-full overflow-y-scroll block relative">
-            <div className="w-full h-auto flex flex-col relative items-start">
+            <div className="w-full h-auto flex flex-col gap-1.5 relative items-start py-10">
               {characterItems.map((characterItem) => {
                 return (
-                  <AnimationDiv
-                    className="w-auto! h-auto!"
+                  <div
                     key={characterItem.characterTarget}
-                    animationParams={characterItem.characterMovingAnimationInfo}
-                    onComplete={() => {
-                      const isNextFallDown = getRandomNumber({ min: 0, max: 100 }) <= 10;
-                      const isNextRun = getRandomNumber({ min: 0, max: 100 }) <= 45;
-                      const randomMarginLeft = getRandomNumber({
-                        min: RANDOM_MOVE_MARGIN_LEFT_MIN,
-                        max: RANDOM_MOVE_MARGIN_LEFT_MAX,
-                      });
-
-                      setCharacterItems((prev) => {
-                        return prev.map((prevCharacterItem) => {
-                          if (prevCharacterItem.characterTarget === characterItem.characterTarget) {
-                            return {
-                              ...prevCharacterItem,
-                              characterMovingAnimationInfo: {
-                                animationName: (() => {
-                                  if (isNextFallDown) {
-                                    return MOVE_ANIMATION_NAMES.STOP;
-                                  }
-                                  return isRun(randomMarginLeft)
-                                    ? MOVE_ANIMATION_NAMES.RUN
-                                    : MOVE_ANIMATION_NAMES.WALK;
-                                })(),
-                                marginLeft: isNextFallDown ? "+=0" : `+=${randomMarginLeft}`,
-                                duration: isNextFallDown
-                                  ? Number.POSITIVE_INFINITY
-                                  : getRandomNumber({
-                                      min: RANDOM_MOVE_DURATION_MIN,
-                                      max: RANDOM_MOVE_DURATION_MAX,
-                                    }),
-                                loop: 0,
-                              },
-                              characterTimelineInfo: getCharacterTimelineInfo({
-                                target: prevCharacterItem.characterTarget,
-                                animation: isNextFallDown
-                                  ? CHARACTER_ANIMATIONS.FALL_DOWN
-                                  : isNextRun
-                                    ? CHARACTER_ANIMATIONS.RUN
-                                    : CHARACTER_ANIMATIONS.WALK,
-                                isRandomSpeed: isNextFallDown,
-                              }),
-                              fallDownCount: isNextFallDown
-                                ? prevCharacterItem.fallDownCount + 1
-                                : prevCharacterItem.fallDownCount,
-                              fallDownAt: isNextFallDown
-                                ? new Date().toISOString()
-                                : prevCharacterItem.fallDownAt,
-                            };
-                          }
-                          return prevCharacterItem;
-                        });
-                      });
-                    }}
+                    className="w-full relative pl-2 box-border bg-gray-100"
                   >
-                    <GifMaker
-                      classNames={{
-                        root: `w-[28px] aspect-140/200 character-${characterItem.characterTarget}`,
-                        image: "scale-170",
+                    {characterItem.goalPassedAt !== null && (
+                      <div className="absolute h-full bottom-0 right-0 bg-black/60 text-white text-xs text-left px-1 inline-flex gap-1 items-center animate-width-fade-in">
+                        <div className="w-[300px] h-full items-center flex gap-1">
+                          <div className="shrink-0 grow-0 font-extrabold text-lg">
+                            {rankingCharacterTargets.findIndex(
+                              (item) => item.characterTarget === characterItem.characterTarget,
+                            ) + 1}
+                            등
+                          </div>
+                          <div className="shrink-0 grow-0 text-sm">
+                            (
+                            {(
+                              ((rankingCharacterTargets.find(
+                                (item) => item.characterTarget === characterItem.characterTarget,
+                              )?.endedAtTimestamp ?? 0) -
+                                gameStartedTimestampRef.current) /
+                              1000
+                            ).toFixed(3)}
+                            초 / {characterItem.fallDownCount}번 넘어짐)
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <AnimationDiv
+                      className="w-auto! h-[38px]! flex items-end box-border pb-2"
+                      animationParams={characterItem.characterMovingAnimationInfo}
+                      onComplete={() => {
+                        const isNextFallDown = getRandomNumber({ min: 0, max: 100 }) <= 10;
+                        const isNextRun = getRandomNumber({ min: 0, max: 100 }) <= 45;
+                        const randomMarginLeft = getRandomNumber({
+                          min: RANDOM_MOVE_MARGIN_LEFT_MIN,
+                          max: RANDOM_MOVE_MARGIN_LEFT_MAX,
+                        });
+
+                        setCharacterItems((prev) => {
+                          return prev.map((prevCharacterItem) => {
+                            if (
+                              prevCharacterItem.characterTarget === characterItem.characterTarget
+                            ) {
+                              return {
+                                ...prevCharacterItem,
+                                characterMovingAnimationInfo: {
+                                  animationName: (() => {
+                                    if (isNextFallDown) {
+                                      return MOVE_ANIMATION_NAMES.STOP;
+                                    }
+                                    return isRun(randomMarginLeft)
+                                      ? MOVE_ANIMATION_NAMES.RUN
+                                      : MOVE_ANIMATION_NAMES.WALK;
+                                  })(),
+                                  marginLeft: isNextFallDown ? "+=0" : `+=${randomMarginLeft}`,
+                                  duration: isNextFallDown
+                                    ? Number.POSITIVE_INFINITY
+                                    : getRandomNumber({
+                                        min: RANDOM_MOVE_DURATION_MIN,
+                                        max: RANDOM_MOVE_DURATION_MAX,
+                                      }),
+                                  loop: 0,
+                                },
+                                characterTimelineInfo: getCharacterTimelineInfo({
+                                  target: prevCharacterItem.characterTarget,
+                                  animation: isNextFallDown
+                                    ? CHARACTER_ANIMATIONS.FALL_DOWN
+                                    : isNextRun
+                                      ? CHARACTER_ANIMATIONS.RUN
+                                      : CHARACTER_ANIMATIONS.WALK,
+                                  isRandomSpeed: isNextFallDown,
+                                  loopCount: isNextFallDown ? 0 : Number.POSITIVE_INFINITY,
+                                }),
+                                fallDownCount: isNextFallDown
+                                  ? prevCharacterItem.fallDownCount + 1
+                                  : prevCharacterItem.fallDownCount,
+                                fallDownAt: isNextFallDown
+                                  ? new Date().toISOString()
+                                  : prevCharacterItem.fallDownAt,
+                              };
+                            }
+                            return prevCharacterItem;
+                          });
+                        });
                       }}
-                      timelineInfo={characterItem.characterTimelineInfo}
-                      loopCount={
-                        characterItem.characterTimelineInfo.timelineName.includes("run") ||
-                        characterItem.characterTimelineInfo.timelineName.includes("walk") ||
-                        characterItem.goalPassedAt !== null
-                          ? 99999
-                          : 0
-                      }
-                      onAnimationRealEnded={(params) => {
-                        if (params.timelineInfo.timelineName.includes("fall-down")) {
-                          setCharacterItems((prev) => {
-                            return prev.map((prevCharacterItem) => {
-                              if (
-                                prevCharacterItem.characterTarget === characterItem.characterTarget
-                              ) {
+                    >
+                      <GifMakerV2
+                        imageSources={getCharacterImages({
+                          target: characterItem.characterTarget,
+                        }).map((value) => {
+                          return {
+                            imageUrl: value,
+                          };
+                        })}
+                        classNames={{
+                          root: `w-[42px] aspect-140/200 character-${characterItem.characterTarget}`,
+                          image: "scale-170",
+                        }}
+                        timelineInfo={characterItem.characterTimelineInfo}
+                        onAnimationRealEnded={(params) => {
+                          if (params.timelineInfo.timelineName.includes("fall-down")) {
+                            setCharacterItems((prev) => {
+                              return prev.map((prevCharacterItem) => {
+                                if (
+                                  prevCharacterItem.characterTarget ===
+                                  characterItem.characterTarget
+                                ) {
+                                  return {
+                                    ...prevCharacterItem,
+                                    characterTimelineInfo: getCharacterTimelineInfo({
+                                      target: prevCharacterItem.characterTarget,
+                                      animation: CHARACTER_ANIMATIONS.WAKE_UP,
+                                      isRandomSpeed: true,
+                                      loopCount: 0,
+                                    }),
+                                  };
+                                }
+                                return prevCharacterItem;
+                              });
+                            });
+                          }
+
+                          if (params.timelineInfo.timelineName.includes("wake-up")) {
+                            setCharacterItems((prev) => {
+                              return prev.map((prevCharacterItem) => {
+                                if (
+                                  prevCharacterItem.characterTarget !==
+                                  characterItem.characterTarget
+                                ) {
+                                  return prevCharacterItem;
+                                }
+
+                                const randomMarginLeft = getRandomNumber({
+                                  min: RANDOM_MOVE_MARGIN_LEFT_MIN,
+                                  max: RANDOM_MOVE_MARGIN_LEFT_MAX,
+                                });
                                 return {
                                   ...prevCharacterItem,
                                   characterTimelineInfo: getCharacterTimelineInfo({
                                     target: prevCharacterItem.characterTarget,
-                                    animation: CHARACTER_ANIMATIONS.WAKE_UP,
-                                    isRandomSpeed: true,
+                                    animation: isRun(randomMarginLeft)
+                                      ? CHARACTER_ANIMATIONS.RUN
+                                      : CHARACTER_ANIMATIONS.WALK,
+                                    loopCount: Number.POSITIVE_INFINITY,
                                   }),
+                                  characterMovingAnimationInfo: {
+                                    ...prevCharacterItem.characterMovingAnimationInfo,
+                                    loop: 0,
+                                    marginLeft: `+=${randomMarginLeft}`,
+                                    animationName: isRun(randomMarginLeft)
+                                      ? MOVE_ANIMATION_NAMES.RUN
+                                      : MOVE_ANIMATION_NAMES.WALK,
+                                    duration: getRandomNumber({
+                                      min: RANDOM_MOVE_DURATION_MIN,
+                                      max: RANDOM_MOVE_DURATION_MAX,
+                                    }),
+                                  },
                                 };
-                              }
-                              return prevCharacterItem;
-                            });
-                          });
-                        }
-
-                        if (params.timelineInfo.timelineName.includes("wake-up")) {
-                          setCharacterItems((prev) => {
-                            return prev.map((prevCharacterItem) => {
-                              if (
-                                prevCharacterItem.characterTarget !== characterItem.characterTarget
-                              ) {
-                                return prevCharacterItem;
-                              }
-
-                              const randomMarginLeft = getRandomNumber({
-                                min: RANDOM_MOVE_MARGIN_LEFT_MIN,
-                                max: RANDOM_MOVE_MARGIN_LEFT_MAX,
                               });
-                              return {
-                                ...prevCharacterItem,
-                                characterTimelineInfo: getCharacterTimelineInfo({
-                                  target: prevCharacterItem.characterTarget,
-                                  animation: isRun(randomMarginLeft)
-                                    ? CHARACTER_ANIMATIONS.RUN
-                                    : CHARACTER_ANIMATIONS.WALK,
-                                }),
-                                characterMovingAnimationInfo: {
-                                  ...prevCharacterItem.characterMovingAnimationInfo,
-                                  loop: 0,
-                                  marginLeft: `+=${randomMarginLeft}`,
-                                  animationName: isRun(randomMarginLeft)
-                                    ? MOVE_ANIMATION_NAMES.RUN
-                                    : MOVE_ANIMATION_NAMES.WALK,
-                                  duration: getRandomNumber({
-                                    min: RANDOM_MOVE_DURATION_MIN,
-                                    max: RANDOM_MOVE_DURATION_MAX,
-                                  }),
-                                },
-                              };
                             });
-                          });
-                        }
-                      }}
-                    />
-                    {characterItem.goalPassedAt !== null && (
-                      <div className="absolute w-[100px] bottom-0 right-0 bg-black/70 text-white text-xs text-left px-1 inline-flex gap-1">
-                        <span>
-                          {rankingCharacterTargets.findIndex(
-                            (item) => item.characterTarget === characterItem.characterTarget,
-                          ) + 1}
-                          등
-                        </span>
-                        <span>/</span>
-                        <span>
-                          {(
-                            ((rankingCharacterTargets.find(
-                              (item) => item.characterTarget === characterItem.characterTarget,
-                            )?.endedAtTimestamp ?? 0) -
-                              gameStartedTimestampRef.current) /
-                            1000
-                          ).toFixed(3)}
-                          초
-                        </span>
-                      </div>
-                    )}
-                  </AnimationDiv>
+                          }
+                        }}
+                      />
+                    </AnimationDiv>
+                  </div>
                 );
               })}
             </div>

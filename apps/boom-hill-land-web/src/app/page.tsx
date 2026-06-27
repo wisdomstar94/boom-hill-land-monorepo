@@ -3,7 +3,7 @@
 import { Button } from "@boom-hill-land-monorepo/react-ui/components/button";
 import { useRouter } from "next/navigation";
 import { BASE_PATH } from "../consts/urls/base-path";
-import { WATER_BALLOON_POP_URL } from "../consts/urls/game-url.consts";
+import { BOOM_HILL_RUN_URL, WATER_BALLOON_POP_URL } from "../consts/urls/game-url.consts";
 
 export default function Page() {
   const router = useRouter();
@@ -26,6 +26,15 @@ export default function Page() {
           >
             물풍선 팡팡
           </Button>
+          {/* 모든 캐릭터 이미지 적용되면 오픈하기. */}
+          {/* <Button
+            onClick={() => {
+              router.push(BOOM_HILL_RUN_URL);
+            }}
+            variant="BLUE"
+          >
+            붐힐런
+          </Button> */}
         </div>
       </div>
     </div>

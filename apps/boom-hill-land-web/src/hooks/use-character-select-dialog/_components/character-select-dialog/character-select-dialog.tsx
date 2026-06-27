@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { GifMaker } from "../../../../components/gif-maker";
+import { GifMakerV2 } from "../../../../components/gif-maker-v2";
 import {
   CHARACTER_ANIMATIONS,
   type CharacterAnimation,
@@ -10,7 +10,8 @@ import {
   CHARACTER_TARGETS,
   type CharacterTarget,
 } from "../../../../consts/characters/character-target.consts";
-import { getCharacterTimelineInfo } from "../../../../macros/get-character-timeline-info";
+import { getCharacterImages } from "../../../../macros/character/get-character-images";
+import { getCharacterTimelineInfo } from "../../../../macros/character/get-character-timeline-info";
 
 export function CharacterSelectDialog(props: {
   onCharacterSelect: (characterTarget: CharacterTarget) => void;
@@ -125,6 +126,7 @@ const CharacterSelectItem = (props: {
     return getCharacterTimelineInfo({
       target: characterTarget,
       animation: characterAnimation,
+      loopCount: Number.POSITIVE_INFINITY,
     });
   }, [characterTarget, characterAnimation]);
 
@@ -136,14 +138,20 @@ const CharacterSelectItem = (props: {
       onClick={onClick}
     >
       <div className="flex-1 min-h-0">
-        <GifMaker
+        <GifMakerV2
+          imageSources={getCharacterImages({
+            target: characterTarget,
+          }).map((value) => {
+            return {
+              imageUrl: value,
+            };
+          })}
           classNames={{
             root: "h-full aspect-140/200",
             imagesContainer: "scale-150 origin-center",
             image: "",
           }}
           timelineInfo={timelineInfo}
-          loopCount={Number.POSITIVE_INFINITY}
         />
       </div>
       <div className="shrink-0 grow-0 text-sm font-bold">{characterName}</div>
