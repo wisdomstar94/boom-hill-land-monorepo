@@ -52,7 +52,7 @@ export function Clouds(props: CloudsProps) {
         animationParams: {
           animationName: `cloud-${index + 1}`,
           delay: getRandomNumber({ min: cloudDelayLimit.min, max: cloudDelayLimit.max }),
-          translateX: { from: 350, to: -width - 300 },
+          translateX: { from: 450, to: -width - 300 },
           duration: getRandomNumber({ min: cloudDurationLimit.min, max: cloudDurationLimit.max }),
           loop: Number.POSITIVE_INFINITY,
         },
@@ -78,7 +78,7 @@ export function Clouds(props: CloudsProps) {
         animationParams: {
           animationName: `cloud2-${index + 1}`,
           delay: getRandomNumber({ min: 1000 * 20, max: 1000 * 60 }),
-          translateX: { from: 350, to: -width - 300 },
+          translateX: { from: 450, to: -width - 300 },
           duration: getRandomNumber({ min: cloudDurationLimit.min, max: cloudDurationLimit.max }),
           loop: Number.POSITIVE_INFINITY,
         },
