@@ -9,16 +9,12 @@ export function getBazziWalkTimelineInfo(props: GetTimelineInfoProps): GifMakerV
     timelineName: "bazzi-walk",
     timelines: [
       {
-        imageUrl: `${BASE_PATH}/boom-hill-character/bazzi/walk/walk-001.png`, // 정면 응시하는 모습
+        imageUrl: `${BASE_PATH}/boom-hill-character/bazzi/walk/walk-001.png`,
         durationMs: CHARACTER_ANIMATION_WALK_DEFAULT_DURATIONS["001"],
       },
       {
-        imageUrl: `${BASE_PATH}/boom-hill-character/bazzi/walk/walk-002.png`, // 고개 위로 올리고 눈 뜬 모습
+        imageUrl: `${BASE_PATH}/boom-hill-character/bazzi/walk/walk-002.png`,
         durationMs: CHARACTER_ANIMATION_WALK_DEFAULT_DURATIONS["002"],
-      },
-      {
-        imageUrl: `${BASE_PATH}/boom-hill-character/bazzi/walk/walk-003.png`, // 고개 위로 올리고 눈 감은 모습
-        durationMs: CHARACTER_ANIMATION_WALK_DEFAULT_DURATIONS["003"],
       },
     ],
     loopCount,

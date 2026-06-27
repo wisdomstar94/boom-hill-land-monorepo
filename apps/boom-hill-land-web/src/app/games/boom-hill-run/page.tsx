@@ -10,6 +10,7 @@ import type { GifMakerV2TimelineInfo } from "../../../components/gif-maker-v2/_t
 import { CHARACTER_ANIMATIONS } from "../../../consts/characters/character-animation.consts";
 import {
   CHARACTER_TARGET_NAMES,
+  CHARACTER_TARGETS,
   type CharacterTarget,
 } from "../../../consts/characters/character-target.consts";
 import { BASE_PATH } from "../../../consts/urls/base-path";
@@ -54,6 +55,17 @@ const MOVE_ANIMATION_NAMES = {
 } as const;
 
 const FIELD_WIDTH = 1200;
+
+const CHARACTER_FALL_DOWN_LABEL = {
+  [CHARACTER_TARGETS.DAO]: "넘어짐",
+  [CHARACTER_TARGETS.BAZZI]: "잠듬",
+  [CHARACTER_TARGETS.DIZNI]: "넘어짐",
+  [CHARACTER_TARGETS.UNI]: "울음",
+  [CHARACTER_TARGETS.MOS]: "넘어짐",
+  [CHARACTER_TARGETS.EDDI]: "넘어짐",
+  [CHARACTER_TARGETS.KEPI]: "넘어짐",
+  [CHARACTER_TARGETS.MARID]: "넘어짐",
+} satisfies Record<CharacterTarget, string>;
 
 export default function Page() {
   const [countStart, setCountStart] = useState(false);
@@ -340,7 +352,7 @@ export default function Page() {
                                   </div>
                                   <div className="text-xs hmin-[326px]text-sm shrink-0 grow-0">
                                     ({takeUntilSecond.toFixed(3)}초 / {characterItem.fallDownCount}
-                                    번 넘어짐)
+                                    번 {CHARACTER_FALL_DOWN_LABEL[characterItem.characterTarget]})
                                   </div>
                                 </div>
                               </div>
