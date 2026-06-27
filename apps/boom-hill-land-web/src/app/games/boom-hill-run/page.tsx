@@ -18,6 +18,7 @@ import { useRequestAnimationFrameManager } from "../../../hooks/use-request-anim
 import { getCharacterImages } from "../../../macros/character/get-character-images";
 import { getCharacterTimelineInfo } from "../../../macros/character/get-character-timeline-info";
 import { getRandomNumber } from "../../../macros/get-random-number";
+import { Clouds } from "./_components/clouds";
 import { Owl } from "./_components/owl";
 import { Turtle } from "./_components/turtle";
 
@@ -557,6 +558,9 @@ export default function Page() {
                 </div>
               </div>
             </div>
+
+            {/* 구름 효과 */}
+            <Clouds width={FIELD_WIDTH + 100} />
           </div>
         </div>
       </div>
