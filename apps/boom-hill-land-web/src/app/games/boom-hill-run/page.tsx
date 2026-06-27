@@ -434,7 +434,7 @@ export default function Page() {
                             };
                           })}
                           classNames={{
-                            root: `w-[27px] hmin-[326px]:w-[29px] hmin-[360px]:w-[34px] hmin-[400px]:w-[38px] shrink-0 grow-0 aspect-140/200 character-box character-${characterItem.characterTarget}`,
+                            root: `w-[27px] hmin-[326px]:w-[29px] hmin-[360px]:w-[34px] hmin-[400px]:w-[38px] shrink-0 grow-0 aspect-400/500 character-box character-${characterItem.characterTarget}`,
                             image: "scale-170",
                           }}
                           timelineInfo={characterItem.characterTimelineInfo}
