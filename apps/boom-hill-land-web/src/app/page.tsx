@@ -26,15 +26,14 @@ export default function Page() {
           >
             물풍선 팡팡
           </Button>
-          {/* 모든 캐릭터 이미지 적용되면 오픈하기. */}
-          {/* <Button
+          <Button
             onClick={() => {
               router.push(BOOM_HILL_RUN_URL);
             }}
             variant="BLUE"
           >
             붐힐런
-          </Button> */}
+          </Button>
         </div>
       </div>
     </div>

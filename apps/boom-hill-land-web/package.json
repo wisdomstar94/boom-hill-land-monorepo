@@ -1,6 +1,6 @@
 {
   "name": "@boom-hill-land-monorepo/boom-hill-land-web",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "private": true,
   "scripts": {
     "next:dev": "cross-env NEXT_PUBLIC_IS_LOCAL=true next dev",
