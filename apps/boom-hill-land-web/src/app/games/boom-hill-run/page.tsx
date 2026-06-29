@@ -347,10 +347,10 @@ export default function Page() {
                               </div>
                               <div className="flex gap-1">
                                 <div className="w-full h-full items-center flex gap-1 box-border">
-                                  <div className="text-xs hmin-[326px]:text-lg shrink-0 grow-0 font-extrabold">
+                                  <div className="text-xs shrink-0 grow-0 font-extrabold">
                                     {rank}등
                                   </div>
-                                  <div className="text-xs hmin-[326px]text-sm shrink-0 grow-0">
+                                  <div className="text-xs shrink-0 grow-0">
                                     ({takeUntilSecond.toFixed(3)}초 / {characterItem.fallDownCount}
                                     번 {CHARACTER_FALL_DOWN_LABEL[characterItem.characterTarget]})
                                   </div>
