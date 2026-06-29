@@ -38,14 +38,14 @@ type RankCharacterItem = {
   endedAtTimestamp: number;
 };
 
-const RANDOM_MOVE_MARGIN_LEFT_MIN = 5;
-const RANDOM_MOVE_MARGIN_LEFT_MAX = 30;
+const RANDOM_MOVE_MARGIN_LEFT_MIN = 25;
+const RANDOM_MOVE_MARGIN_LEFT_MAX = 50;
 
 const RANDOM_MOVE_DURATION_MIN = 300;
 const RANDOM_MOVE_DURATION_MAX = 500;
 
 function isRun(marginLeft: number) {
-  return marginLeft > 20;
+  return marginLeft > 40;
 }
 
 const MOVE_ANIMATION_NAMES = {
@@ -64,7 +64,7 @@ const CHARACTER_FALL_DOWN_LABEL = {
   [CHARACTER_TARGETS.MOS]: "넘어짐",
   [CHARACTER_TARGETS.EDDI]: "넘어짐",
   [CHARACTER_TARGETS.KEPI]: "넘어짐",
-  [CHARACTER_TARGETS.MARID]: "넘어짐",
+  [CHARACTER_TARGETS.MARID]: "거울봄",
 } satisfies Record<CharacterTarget, string>;
 
 export default function Page() {
